@@ -2,12 +2,10 @@
   "name": "booking-date-checker",
   "version": "1.0.0",
   "license": "MIT",
-  "description": "Script to check available booking dates",
-  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "ts-node src/index.ts",
-    "start:cron": "ts-node src/cron.ts",
+    "check": "ts-node src/action.ts",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -16,7 +14,6 @@
     "ts-node": "^10.9.1",
     "@types/node": "^18.15.0",
     "@types/dotenv": "^8.2.0",
-    "@types/node-cron": "^3.0.11",
     "@types/jest": "^29.5.11",
     "ts-jest": "^29.1.1",
     "jest": "^29.7.0",
@@ -26,7 +23,6 @@
     "axios": "^1.6.2",
     "dotenv": "^16.3.1",
     "nodemailer": "^6.9.7",
-    "@types/nodemailer": "^6.4.14",
-    "node-cron": "^3.0.0"
+    "@types/nodemailer": "^6.4.14"
   }
 } 

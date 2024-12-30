@@ -1,0 +1,50 @@
+name: Check Booking Dates
+
+on:
+  schedule:
+    - cron: '*/5 10-20 * * 1-5'  # Every 5 mins, 10 AM-8 PM, Mon-Fri
+  workflow_dispatch:
+
+jobs:
+  check-dates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      # Download previous state
+      - name: Download state
+        uses: actions/download-artifact@v3
+        with:
+          name: checker-state
+          path: .
+        continue-on-error: true
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        
+      - name: Build
+        run: yarn build
+        
+      - name: Check dates
+        env:
+          FORM_URL: ${{ secrets.FORM_URL }}
+          BOOKING_FORM:URL: ${{ secrets.BOOK_FORM_URL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node dist/action.js
+      
+      # Save new state with 7-day retention
+      - name: Upload state
+        uses: actions/upload-artifact@v3
+        with:
+          name: checker-state
+          path: state.json
+          retention-days: 7 
