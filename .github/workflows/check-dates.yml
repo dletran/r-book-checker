@@ -13,9 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      # Download previous state
+      # Download previous state (may not exist on first run)
       - name: Download state
-        uses: actions/download-artifact@v3
+        id: download
+        uses: actions/download-artifact@v4
         with:
           name: checker-state
           path: .
@@ -43,7 +44,7 @@ jobs:
       
       # Save new state with 7-day retention
       - name: Upload state
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: checker-state
           path: state.json
