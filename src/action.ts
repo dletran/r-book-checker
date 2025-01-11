@@ -4,6 +4,8 @@ import fs from 'fs/promises';
 interface State {
   foundFullDatesThisWeek: boolean;
   lastCheckWeek: number;
+  lastHtmlContent?: string;
+  lastCheckTimestamp?: string;
 }
 
 async function loadState(): Promise<State> {
@@ -29,6 +31,7 @@ export async function performCheck() {
     console.log('First run of Monday detected - resetting state');
     state.foundFullDatesThisWeek = false;
     state.lastCheckWeek = currentWeek;
+
     await saveState(state);
   }
 
@@ -40,6 +43,10 @@ export async function performCheck() {
   try {
     const result = await main();
     
+    // Store the HTML content and timestamp
+    state.lastHtmlContent = result?.htmlContent;
+    state.lastCheckTimestamp = new Date().toISOString();
+    
     if (result?.availableDates && result.availableDates.length > 0) {
       const hasAvailableDatesInNextTwoWeeks = result.availableDates.some(date => 
         isDateInNextTwoWeeks(date.toISOString())
@@ -47,10 +54,11 @@ export async function performCheck() {
 
       if (hasAvailableDatesInNextTwoWeeks) {
         state.foundFullDatesThisWeek = true;
-        await saveState(state);
         console.log('Found available dates - pausing checks until next Monday');
       }
     }
+    
+    await saveState(state);
   } catch (error) {
     console.error('Error in check:', error);
   }

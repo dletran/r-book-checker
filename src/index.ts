@@ -72,7 +72,8 @@ async function main() {
     return {
       availableDates,
       fullDates,
-      daysOff
+      daysOff,
+      htmlContent
     };
   } catch (error) {
     console.error('Error:', error);
